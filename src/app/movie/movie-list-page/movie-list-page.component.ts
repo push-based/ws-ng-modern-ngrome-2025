@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { exhaustMap, Observable, scan, startWith, Subject, take } from 'rxjs';
 
+import { DirtyCheckComponent } from '../../dirty-check.component';
 import { ElementVisibilityDirective } from '../../shared/cdk/element-visibility/element-visibility.directive';
 import { TMDBMovieModel } from '../../shared/model/movie.model';
 import { MovieService } from '../movie.service';
@@ -10,6 +11,7 @@ import { MovieListComponent } from '../movie-list/movie-list.component';
 @Component({
   selector: 'movie-list-page',
   template: `
+    <dirty-check />
     <movie-list
       [movies]="movies"
       [favoriteMovieIds]="favoriteMovieIds"
@@ -17,19 +19,23 @@ import { MovieListComponent } from '../movie-list/movie-list.component';
     />
     <div (elementVisible)="paginate$.next()"></div>
   `,
-  imports: [MovieListComponent, ElementVisibilityDirective],
+  imports: [
+    MovieListComponent,
+    ElementVisibilityDirective,
+    DirtyCheckComponent,
+  ],
 })
 export class MovieListPageComponent {
+  private movieService = inject(MovieService);
+  private activatedRoute = inject(ActivatedRoute);
+
   paginate$ = new Subject<void>();
 
   movies: TMDBMovieModel[] = [];
 
   favoriteMovieIds = new Set<string>();
 
-  constructor(
-    private movieService: MovieService,
-    private activatedRoute: ActivatedRoute,
-  ) {
+  constructor() {
     this.activatedRoute.params.subscribe((params) => {
       if (params.category) {
         this.paginate((page) =>

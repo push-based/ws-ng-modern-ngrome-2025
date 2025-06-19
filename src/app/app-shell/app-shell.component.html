@@ -1,6 +1,6 @@
 <ui-side-drawer
-  [opened]="sideDrawerOpen"
-  (openedChange)="sideDrawerOpen = $event"
+  [opened]="sideDrawerOpen()"
+  (openedChange)="sideDrawerOpen.set($event)"
 >
   <a class="navigation-header" href="/">
     <picture srcset="/assets/images/logo.svg" media="(min-width: 80em)">
@@ -89,7 +89,7 @@
 
     <h3 class="navigation--headline">Genres</h3>
 
-    @for (genre of genres$ | async; track genre) {
+    @for (genre of genres(); track genre) {
       <a
         class="navigation--link"
         (click)="trackNavigation('list/genre-' + genre.id)"

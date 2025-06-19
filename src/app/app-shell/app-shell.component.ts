@@ -1,5 +1,5 @@
-import { AsyncPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FastSvgComponent } from '@push-based/ngx-fast-svg';
@@ -26,32 +26,30 @@ import { SideDrawerComponent } from '../ui/component/side-drawer/side-drawer.com
     ReactiveFormsModule,
     FormsModule,
     DarkModeToggleComponent,
-    AsyncPipe,
   ],
 })
 export class AppShellComponent {
-  constructor(
-    protected authService: AuthService,
-    private movieService: MovieService,
-    private router: Router,
-    private trackingService: TrackingService,
-  ) {}
+  protected authService = inject(AuthService);
+  private movieService = inject(MovieService);
+  private router = inject(Router);
+  private trackingService = inject(TrackingService);
 
-  genres$ = this.movieService.getGenres();
+  genres = toSignal(this.movieService.getGenres(), { initialValue: [] });
 
-  sideDrawerOpen = false;
+  sideDrawerOpen = signal(false);
 
-  private _searchValue = '';
-  set searchValue(value: string) {
-    this._searchValue = value;
-    this.router.navigate(['search', value]);
-  }
-  get searchValue(): string {
-    return this._searchValue;
+  searchValue = signal('');
+
+  constructor() {
+    effect(() => {
+      if (this.searchValue()) {
+        this.router.navigate(['search', this.searchValue()]);
+      }
+    });
   }
 
   toggleSideDrawer() {
-    this.sideDrawerOpen = !this.sideDrawerOpen;
+    this.sideDrawerOpen.update((open) => !open);
   }
 
   trackNavigation(route: string) {

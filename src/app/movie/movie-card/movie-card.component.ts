@@ -3,11 +3,13 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   Output,
 } from '@angular/core';
 import { fromEvent } from 'rxjs';
 
+import { DirtyCheckComponent } from '../../dirty-check.component';
 import { TMDBMovieModel } from '../../shared/model/movie.model';
 import { TiltDirective } from '../../shared/tilt.directive';
 import { StarRatingComponent } from '../../ui/pattern/star-rating/star-rating.component';
@@ -25,6 +27,7 @@ import { MovieImagePipe } from '../movie-image.pipe';
         [src]="movie.poster_path | movieImage: 780"
       />
       <div class="movie-card-content">
+        <dirty-check />
         <div class="movie-card-title">{{ movie.title | uppercase }}</div>
         <div class="movie-card-rating">
           <ui-star-rating [rating]="movie.vote_average" />
@@ -77,9 +80,17 @@ import { MovieImagePipe } from '../movie-image.pipe';
       font-size: 2rem;
     }
   `,
-  imports: [TiltDirective, StarRatingComponent, UpperCasePipe, MovieImagePipe],
+  imports: [
+    TiltDirective,
+    StarRatingComponent,
+    UpperCasePipe,
+    MovieImagePipe,
+    DirtyCheckComponent,
+  ],
 })
 export class MovieCardComponent {
+  elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+
   @Input({ required: true }) movie!: TMDBMovieModel;
   @Input({ required: true }) index!: number;
   @Input() favorite = false;
@@ -87,7 +98,7 @@ export class MovieCardComponent {
 
   @Output() favoriteChange = new EventEmitter<boolean>();
 
-  constructor(public elementRef: ElementRef<HTMLElement>) {
+  constructor() {
     fromEvent(this.elementRef.nativeElement, 'mouseenter').subscribe(() => {
       this.elementRef.nativeElement.classList.add('movie-card--hover');
     });

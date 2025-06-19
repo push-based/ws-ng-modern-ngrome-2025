@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input } from '@angular/core';
+import { Directive, ElementRef, Input, inject } from '@angular/core';
 import { fromEvent, map, merge } from 'rxjs';
 
 @Directive({
@@ -8,11 +8,13 @@ import { fromEvent, map, merge } from 'rxjs';
   },
 })
 export class TiltDirective {
+  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+
   @Input() tiltDegree = 5;
 
   rotate = 'rotate(0deg)';
 
-  constructor(private elementRef: ElementRef<HTMLElement>) {
+  constructor() {
     const rotate$ = fromEvent<MouseEvent>(
       this.elementRef.nativeElement,
       'mouseenter',
