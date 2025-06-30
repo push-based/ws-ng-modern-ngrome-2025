@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { exhaustMap, Observable, scan, startWith, Subject, take } from 'rxjs';
 
@@ -20,16 +20,16 @@ import { MovieListComponent } from '../movie-list/movie-list.component';
   imports: [MovieListComponent, ElementVisibilityDirective],
 })
 export class MovieListPageComponent {
+  private movieService = inject(MovieService);
+  private activatedRoute = inject(ActivatedRoute);
+
   paginate$ = new Subject<void>();
 
   movies: TMDBMovieModel[] = [];
 
   favoriteMovieIds = new Set<string>();
 
-  constructor(
-    private movieService: MovieService,
-    private activatedRoute: ActivatedRoute,
-  ) {
+  constructor() {
     this.activatedRoute.params.subscribe((params) => {
       if (params.category) {
         this.paginate((page) =>

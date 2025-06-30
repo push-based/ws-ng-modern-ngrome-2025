@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { insert, remove } from '@rx-angular/cdk/transformations';
 import { map, Observable, tap, timer } from 'rxjs';
 
@@ -13,7 +13,8 @@ import { TMDBMovieGenreModel } from '../shared/model/movie-genre.model';
   providedIn: 'root',
 })
 export class MovieService {
-  constructor(private httpClient: HttpClient) {}
+  private httpClient = inject(HttpClient);
+
 
   getGenres(): Observable<TMDBMovieGenreModel[]> {
     return this.httpClient

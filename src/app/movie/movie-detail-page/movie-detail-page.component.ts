@@ -1,5 +1,5 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FastSvgComponent } from '@push-based/ngx-fast-svg';
 import { startWith, switchMap } from 'rxjs';
@@ -146,10 +146,9 @@ import { MovieListComponent } from '../movie-list/movie-list.component';
   ],
 })
 export class MovieDetailPageComponent {
-  constructor(
-    private route: ActivatedRoute,
-    private movieService: MovieService,
-  ) {}
+  private route = inject(ActivatedRoute);
+  private movieService = inject(MovieService);
+
 
   movie$ = this.route.params.pipe(
     switchMap((params) =>

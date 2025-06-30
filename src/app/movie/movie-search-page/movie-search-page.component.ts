@@ -1,5 +1,5 @@
 import { AsyncPipe, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, switchMap } from 'rxjs';
 
@@ -21,10 +21,9 @@ import { MovieListComponent } from '../movie-list/movie-list.component';
   imports: [MovieListComponent, AsyncPipe, NgIf],
 })
 export class MovieSearchPageComponent {
-  constructor(
-    private movieService: MovieService,
-    private activatedRoute: ActivatedRoute,
-  ) {}
+  private movieService = inject(MovieService);
+  private activatedRoute = inject(ActivatedRoute);
+
 
   movies$: Observable<TMDBMovieModel[]> = this.activatedRoute.params.pipe(
     switchMap((params) => this.movieService.searchMovies(params['query'])),

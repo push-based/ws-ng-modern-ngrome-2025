@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormArray,
   FormControl,
@@ -27,7 +27,8 @@ import { MovieSearchControlComponent } from '../movie-search-control/movie-searc
   ],
 })
 export class MyMovieListComponent implements OnInit {
-  constructor(private movieService: MovieService) {}
+  private movieService = inject(MovieService);
+
 
   myMovieForm = new FormGroup({
     movie: new FormControl(null, [

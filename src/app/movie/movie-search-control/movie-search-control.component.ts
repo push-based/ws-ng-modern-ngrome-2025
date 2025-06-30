@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { of, Subject, switchMap } from 'rxjs';
 
@@ -61,7 +61,8 @@ import { MovieModel } from '../movie-model';
 export class MovieSearchControlComponent
   implements ControlValueAccessor, AfterViewInit
 {
-  constructor(private movieService: MovieService) {}
+  private movieService = inject(MovieService);
+
 
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
 
